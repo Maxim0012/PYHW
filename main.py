@@ -1,93 +1,102 @@
-# A, E, I, O, U, L, N, S, T, R – 1 очко;
-# D, G – 2 очка;
-# B, C, M, P – 3 очка;
-# F, H, V, W, Y – 4 очка;
-# K – 5 очков;
-# J, X – 8 очков;
-# Q, Z – 10 очков.
-# А русские буквы оцениваются так:
+import os
 
-# А, В, Е, И, Н, О, Р, С, Т – 1 очко;
-# Д, К, Л, М, П, У – 2 очка;
-# Б, Г, Ё, Ь, Я – 3 очка;
-# Й, Ы – 4 очка;
-# Ж, З, Х, Ц, Ч – 5 очков;
-# Ш, Э, Ю – 8 очков;
-# Ф, Щ, Ъ – 10 очков.
-
-k = "ноутбук"
-
-engl = {
-    "A": 1,
-    "E": 1,
-    "I": 1,
-    "O": 1,
-    "U": 1,
-    "L": 1,
-    "N": 1,
-    "S": 1,
-    "T": 1,
-    "R": 1,
-    "D": 2,
-    "G": 2,
-    "B": 3,
-    "C": 3,
-    "M": 3,
-    "P": 3,
-    "F": 4,
-    "H": 4,
-    "V": 4,
-    "W": 4,
-    "Y": 4,
-    "K": 5,
-    "J": 8,
-    "X": 8,
-    "Q": 10,
-    "Z": 10,
-}
+NAME_FILE = "Телефонный справочник.txt"
 
 
-russ = {
-    "А": 1,
-    "В": 1,
-    "Е": 1,
-    "И": 1,
-    "Н": 1,
-    "О": 1,
-    "Р": 1,
-    "С": 1,
-    "Т": 1,
-    "Д": 2,
-    "К": 2,
-    "Л": 2,
-    "М": 2,
-    "П": 2,
-    "У": 2,
-    "Б": 3,
-    "Г": 3,
-    "Ё": 3,
-    "Ь": 3,
-    "Я": 3,
-    "Й": 4,
-    "Ы": 4,
-    "Ж": 5,
-    "з": 5,
-    "Х": 5,
-    "Ц": 5,
-    "Ч": 5,
-    "Ш": 8,
-    "Э": 8,
-    "Ю": 8,
-    "Ф": 10,
-    "Щ": 10,
-    "Ъ": 10,
-}
-word = k
-word = word.upper()
-sum = 0
-for i in word:
-    if i in engl:
-        sum += engl[i]
-    elif i in russ:
-        sum += russ[i]
-print(sum)
+def main():
+
+    """если есть файл, то его считать, если нет, то пустой список
+    вывести меню и меню обработать в цикле"""
+    data = {}
+    if os.path.exists(NAME_FILE):
+        with open(NAME_FILE) as f:
+            for line in f.readlines():
+                if line:
+                    #print(line.split("\t"))
+                    name, num = line.split("\t")
+                    data[name] = num
+    else:
+        with open(NAME_FILE, "w") as f:
+            pass
+
+    while True:
+        while True:
+        
+            print("1. Ввести данные")
+            print("2. Поиск")
+            print("3. Выход")
+            user_choice = input("Введите: ") 
+            if user_choice not in ["1", "2", "3"]:
+                print("Ошибка")
+            else: 
+                break
+        match user_choice: 
+            case "1":
+                data = input_data(data)
+            case "2":
+                search_data(data)
+            case "3":
+                print("Выход")
+                if not data: 
+                    return
+                with open(NAME_FILE, "w") as f:
+                    for name in data:
+                        print(f"{name}\t{data[name]}", file=f)
+                return
+            
+
+def input_data(data):
+    name = input("Введите ФИО: ")
+    if name and len(name.split() ) == 3: 
+        num = input("Введите номер телефона: ")
+
+        if num and num.isdigit():
+
+            data[name.replace("\t"," ")] = num
+            return data
+    print("Неверный ввод данных")
+    return data
+
+def search_data(data):
+    user_input = input("Ввести данные для поиска: ")
+    while True:
+        
+            print("1. Найти фамилию")
+            print("2. Найти имя")
+            print("3. Найти отчество")
+            print("4. Найти номер телефона")
+            print("5. Вернуться в меню")
+            user_choice = input("Введите: ") 
+            if user_choice not in ["1", "2", "3", "4", "5"]:
+                print("Ошибка")
+            else: 
+                break
+    match user_choice: 
+            case "1":
+                for key in data:
+                    name1, name2, name3 = key.split()
+                    if name1 == user_input:
+                        print(f"{key} {data[key]}")
+                    
+            case "2":
+               for key in data:
+                    name1, name2, name3 = key.split()
+                    if name2 == user_input:
+                        print(f"{key} {data[key]}")
+            case "3":
+               for key in data:
+                    name1, name2, name3 = key.split()
+                    if name3 == user_input:
+                        print(f"{key} {data[key]}")
+            case "4":
+               for key, value in data.items():
+                   if value == user_input:
+                      print(f"{key} {data[key]}") 
+              
+            case "5":
+                print("Выход")
+                
+                return    
+
+if __name__ == "__main__":
+    main()
